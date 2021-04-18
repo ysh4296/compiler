@@ -55,13 +55,13 @@ int main(int argc, char* argv[])
     automata_num [1]: start point
     automata_num [2]: single charactor
     automata_num [3]: string
-    automata_num [4]: signed integer + operator¡¯-¡¯
+    automata_num [4]: signed integer + operatorâ€™-â€™
     automata_num [5]: semicolon
     automata_num [6]: id + special statement + boolean + Vtype
     automata_num [7]: ()
     automata_num [8]: []
     automata_num [9]: {}
-    automata_num [10]: arithmetic operator(except for ¡®-¡¯)
+    automata_num [10]: arithmetic operator(except for â€˜-â€™)
     automata_num [11]: assign &comparison operator
     automata_num [12]: comma
     automata_num [13]: white space
@@ -137,17 +137,19 @@ int main(int argc, char* argv[])
         //if the token is not white space(automata number==13), push token to result string
         if (auto_num != 13) answer.push_back({ EndState_table[auto_num][cur_state],str });
     }
-
+    ofstream writeFile;
+    writeFile.open("output.txt");
     for (int i = 0; i < (int)answer.size(); i++) //after end of parsing, print all the result on console screen
     {
         //if the token name is error, print error
         if (answer[i].first == "error")
         {
-            cout << answer[i].second << endl;
+            writeFile.write(answer[i].second.c_str(), (int)answer[i].second.size()-1);
             break;
         }
         //format : <Token_Type,Token_Name>
-        cout << "<" << answer[i].first << "," << answer[i].second << ">" << endl;
+        string line = "<" + answer[i].first + "," + answer[i].second + ">\n";
+        writeFile.write(line.c_str(),(int)line.size());
     }
     return 0;
 }
