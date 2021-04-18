@@ -55,13 +55,13 @@ int main(int argc, char* argv[])
     automata_num [1]: start point
     automata_num [2]: single charactor
     automata_num [3]: string
-    automata_num [4]: signed integer + operator¡¯-¡¯
+    automata_num [4]: signed integer + operatorâ€™-â€™
     automata_num [5]: semicolon
     automata_num [6]: id + special statement + boolean + Vtype
     automata_num [7]: ()
     automata_num [8]: []
     automata_num [9]: {}
-    automata_num [10]: arithmetic operator(except for ¡®-¡¯)
+    automata_num [10]: arithmetic operator(except for â€˜-â€™)
     automata_num [11]: assign &comparison operator
     automata_num [12]: comma
     automata_num [13]: white space
