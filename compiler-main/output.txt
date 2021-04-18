@@ -32,4 +32,4 @@
 <RSparen,)>
 <LLparen,[>
 <RLparen,]>
-<Comma,,>
+<Identifier,w>
