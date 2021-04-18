@@ -87,17 +87,21 @@ int main(int argc, char* argv[])
         ii next = DFA_table[auto_num][cur_state][(int)input]; //by searching DFA_table with current automata, current state, input character, find the next state
         if ((next.first == 0 && next.second == 0))              //if the result==(0,0), which means not defined in DFA_table( end state)
         {
-            if (EndState_table[auto_num][cur_state] == "") break;// if the pair of automata and state is not defined in EndState_table when the token ends, break
+            if (EndState_table[auto_num][cur_state] == "") {// if the pair of automata and state is not defined in EndState_table when the token ends, break
+                str += buf[i];//make the wrong array
+                break;
+            }
             else    //if the pair of automata and state is defined in the EndState_table = normal exit
             {
                 //condition checking for '-'operator
                 if (auto_num == 4 && cur_state != 2)//if current automata is 4(single integer), and state is not 2(operator '-')
                 {
-                    if (str[0] == '-') {
-                        //if the token next to '-'(except blanks) is one of identifier,integer, or right paren, push the token as operator '-'
-                        if (strcmp(answer[(int)answer.size() - 1].first.c_str(), "Identifier") == 0 || strcmp(answer[(int)answer.size() - 1].first.c_str(), "Signed_integer") == 0 || strcmp(answer[(int)answer.size() - 1].first.c_str(), "RSparen") == 0) {
-                            answer.push_back({ EndState_table[4][2],"-" });    //push as operator
-                            str.erase(0, 1);                        //erase '-'
+                    if (str[0] == '-') {//if the token next to '-'(except blanks) is one of identifier,integer, or right paren, push the token as operator '-'
+                        if (answer.size() != 0) {
+                            if (strcmp(answer[(int)answer.size() - 1].first.c_str(), "Identifier") == 0 || strcmp(answer[(int)answer.size() - 1].first.c_str(), "Signed_integer") == 0 || strcmp(answer[(int)answer.size() - 1].first.c_str(), "RSparen") == 0) {
+                                answer.push_back({ EndState_table[4][2],"-" });    //push as operator
+                                str.erase(0, 1);                        //erase '-'
+                            }
                         }
                     }
                 }
@@ -117,7 +121,6 @@ int main(int argc, char* argv[])
         cur_state = next.second;
         str += buf[i];
     }
-
     if (EndState_table[auto_num][cur_state] == "") //if the last token is not defined in EndState_table after end of parsing, print error
     {
         answer.clear();
@@ -142,14 +145,14 @@ int main(int argc, char* argv[])
     for (int i = 0; i < (int)answer.size(); i++) //after end of parsing, print all the result on console screen
     {
         //if the token name is error, print error
-        if (answer[i].first == "error")
+        if (strcmp(answer[i].first.c_str(),"error") == 0)
         {
-            writeFile.write(answer[i].second.c_str(), (int)answer[i].second.size()-1);
+            writeFile.write(answer[i].second.c_str(), (int)answer[i].second.size());
             break;
         }
         //format : <Token_Type,Token_Name>
         string line = "<" + answer[i].first + "," + answer[i].second + ">\n";
-        writeFile.write(line.c_str(),(int)line.size());
+        writeFile.write(line.c_str(), (int)line.size());
     }
     return 0;
 }
