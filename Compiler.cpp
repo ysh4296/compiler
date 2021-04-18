@@ -140,19 +140,19 @@ int main(int argc, char* argv[])
         //if the token is not white space(automata number==13), push token to result string
         if (auto_num != 13) answer.push_back({ EndState_table[auto_num][cur_state],str });
     }
-    ofstream writeFile;
-    writeFile.open("output.txt");
+    ofstream writeFile; //writing a file
+    writeFile.open("output.txt"); // output.txt
     for (int i = 0; i < (int)answer.size(); i++) //after end of parsing, print all the result on console screen
     {
-        //if the token name is error, print error
+        //if the token name is error, show
         if (strcmp(answer[i].first.c_str(),"error") == 0)
         {
             writeFile.write(answer[i].second.c_str(), (int)answer[i].second.size());
-            break;
+            break; // if there's an error break analysis
         }
         //format : <Token_Type,Token_Name>
         string line = "<" + answer[i].first + "," + answer[i].second + ">\n";
-        writeFile.write(line.c_str(), (int)line.size());
+        writeFile.write(line.c_str(), (int)line.size()); // write on it
     }
     return 0;
 }
