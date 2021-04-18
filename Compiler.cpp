@@ -9,8 +9,8 @@ using namespace std;
 typedef pair<int, int> ii;                              //New type definition for token table
 typedef pair<string, string> ss;                        //New type definition for Output String
 
-ii DFA_table[15][39][127];     // DFA table         //in(current_automata, current_state,input_character) -> out(next_automata,next_state)
-string EndState_table[15][39]; // EndState table    //in(current_automata, current_state) -> out(token_type)
+ii DFA_table[15][56][127];     // DFA table         //in(current_automata, current_state,input_character) -> out(next_automata,next_state)
+string EndState_table[15][56]; // EndState table    //in(current_automata, current_state) -> out(token_type)
 
 
 void DFA_table_in() //Fill in the DFA table from "table.txt" which is in same directory
@@ -55,13 +55,13 @@ int main(int argc, char* argv[])
     automata_num [1]: start point
     automata_num [2]: single charactor
     automata_num [3]: string
-    automata_num [4]: signed integer + operatorâ€™-â€™
+    automata_num [4]: signed integer + operator¡¯-¡¯
     automata_num [5]: semicolon
     automata_num [6]: id + special statement + boolean + Vtype
     automata_num [7]: ()
     automata_num [8]: []
     automata_num [9]: {}
-    automata_num [10]: arithmetic operator(except for â€˜-â€™)
+    automata_num [10]: arithmetic operator(except for ¡®-¡¯)
     automata_num [11]: assign &comparison operator
     automata_num [12]: comma
     automata_num [13]: white space
@@ -80,7 +80,6 @@ int main(int argc, char* argv[])
     DFA_table_in();
     EndState_table_in();
 #pragma endregion
-
     for (int i = 0; i < (int)buf.size(); i++)   //iterate by lenghth of string
     {
         input = buf[i];     //get current character from buffer
@@ -140,19 +139,19 @@ int main(int argc, char* argv[])
         //if the token is not white space(automata number==13), push token to result string
         if (auto_num != 13) answer.push_back({ EndState_table[auto_num][cur_state],str });
     }
-    ofstream writeFile; //writing a file
-    writeFile.open("output.txt"); // output.txt
+    ofstream writeFile;
+    writeFile.open("output.txt");
     for (int i = 0; i < (int)answer.size(); i++) //after end of parsing, print all the result on console screen
     {
-        //if the token name is error, show
+        //if the token name is error, print error
         if (strcmp(answer[i].first.c_str(),"error") == 0)
         {
             writeFile.write(answer[i].second.c_str(), (int)answer[i].second.size());
-            break; // if there's an error break analysis
+            break;
         }
         //format : <Token_Type,Token_Name>
         string line = "<" + answer[i].first + "," + answer[i].second + ">\n";
-        writeFile.write(line.c_str(), (int)line.size()); // write on it
+        writeFile.write(line.c_str(), (int)line.size());
     }
     return 0;
 }
