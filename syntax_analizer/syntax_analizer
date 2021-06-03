@@ -67,14 +67,12 @@ void Reduce_Rule_in() // fill reduce rules for reduce
 {
 	ifstream is;
 	is.open("Reduce_Rule.txt");
-	int input;
+	int F,S;
 	if (is.is_open()) {
 		while (!is.eof()) {
-			is >> st;
-			char* ch_s = new char[st.size()];
-			is >> input;
-			strcpy(ch_s, st.c_str());
-			trans_table.push_back({ ch_s , input });// fill the table
+			is >> F;
+			is >> S;
+			Reduce_Rule.push_back({ F , S });// fill the table
 		}
 	}
 	is.close();
@@ -104,7 +102,7 @@ void token_in(string buf) {// get the input file in token vector to parse
 			F = T;
 			T = strtok(NULL, ",");
 			S = T;
-			token_list.push_back(token(F, Type_Trans(S), { line,comp }));
+			token_list.push_back(token(S, Type_Trans(F), { line,comp }));
 		}
 		else { // next token is in the same line
 			comp++;
@@ -113,14 +111,23 @@ void token_in(string buf) {// get the input file in token vector to parse
 			F = T;
 			T = strtok(NULL, ",");
 			S = T;
-			token_list.push_back(token(F, Type_Trans(S), {line,comp}));
+			token_list.push_back(token(S, Type_Trans(F), {line,comp}));
 		}
 	}
+}
+void solve() {
+	int cur_state;
+
+
+
+
+
+
 }
 int main(int argc, char* argv[]) {
 	S_R_table_in(); //init S_R_Table
 	Type_Trans_table_in(); // init trans table
-	
+	Reduce_Rule_in();
 	// get the out of lexical analyzer as input token
 	ifstream readFile;
 	readFile.open(argv[1]);
@@ -129,16 +136,6 @@ int main(int argc, char* argv[]) {
 	char* end = new char[4]; 
 	strcpy(end,"end");
 	token_list.push_back(token(end, 21, { 0,0 })); // add ""
-
-
-
-
-
-
-
-
-
-
-
+	solve();
 	return 0;
 }
