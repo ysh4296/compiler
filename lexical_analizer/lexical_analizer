@@ -1,0 +1,144 @@
+#include <iostream>
+#include <fstream>
+#include <sstream>
+#include <vector>
+#include <stack>
+#include <cstring>
+#include <string>
+using namespace std;
+typedef pair<int, int> ii;
+typedef pair<char*, int> ci;
+struct token {// struct for token
+	token(char* d , int t ,ii l) {
+		data = d;
+		type = t;
+		loc = l;
+	}
+	char* data;// data of token
+	int type;// type of token for input of S_R_Table
+	ii loc;// location of token
+}; 
+string S_R_table[15][56];// S_R table for shift-reduce operation
+std::stack<int> stack;// stack for save current state
+vector<token> token_list;// out of lexical analizer and input of syntax analizer
+vector<ci> trans_table;// table for translate tokens to push in token_list
+vector<ii> Reduce_Rule;// reduce rule for reduce operation { reduced_type number , # for erase at this reduce }
+void S_R_table_in() // Fill in the Shift_Reduce table from "S_R_table.txt" which is in same directory
+{   
+	ifstream is;
+    is.open("S_R_Table.txt");
+	string st;
+	if (is.is_open()) {
+		for (int r = 0; r < 86; r++) {
+			for (int c = 0; c < 40; c++) {
+				is >> st;
+				is >> st;
+				S_R_table[r][c] = st;  // fill the table with certain order
+			}
+		}
+	}
+    is.close();
+}
+void Type_Trans_table_in() // fill trans table for use type in type_trans_table
+{
+	ifstream is;
+	is.open("Trans_Table.txt");
+	string st;	// first component of trans_table
+	int input;  // second component of trans_table 
+	if (is.is_open()) {
+		while (!is.eof()) {
+			is >> st;
+			char* ch_s = new char[st.size()];
+			is >> input;
+			strcpy(ch_s, st.c_str());
+			trans_table.push_back({ ch_s , input });// fill the table
+		}
+	}
+	is.close();
+}
+int Type_Trans(char* in) {
+	for (int i = 0; i < (int)trans_table.size(); i++) {
+		if (strcmp(in, trans_table[i].first) == 0) {
+			return trans_table[i].second;
+		}
+	}
+}
+void Reduce_Rule_in() // fill reduce rules for reduce
+{
+	ifstream is;
+	is.open("Reduce_Rule.txt");
+	int input;
+	if (is.is_open()) {
+		while (!is.eof()) {
+			is >> st;
+			char* ch_s = new char[st.size()];
+			is >> input;
+			strcpy(ch_s, st.c_str());
+			trans_table.push_back({ ch_s , input });// fill the table
+		}
+	}
+	is.close();
+}
+void token_in(string buf) {// get the input file in token vector to parse
+	char* S = (char*)malloc(buf.size()*sizeof(char));
+	strcpy(S,buf.c_str());
+	char* T;
+	char* F;
+	char* S;
+	int line = 0;// line no
+	int comp = 1;// component no
+	vector<char*> list;
+	T = strtok(S, ">");
+	while (T != NULL) {
+		cout << T << endl;
+		list.push_back(T);
+		T = strtok(NULL, ">");
+	}
+	for (int i = 0; i < (int)list.size(); i++) {
+		if (list[i][0] == '\n') { // next token is in next line
+			line++;
+			comp = 1;
+			comp++;
+			T = strtok(list[i], "<");
+			T = strtok(NULL, ",");
+			F = T;
+			T = strtok(NULL, ",");
+			S = T;
+			token_list.push_back(token(F, Type_Trans(S), { line,comp }));
+		}
+		else { // next token is in the same line
+			comp++;
+			T = strtok(list[i], "<");
+			T = strtok(NULL, ",");
+			F = T;
+			T = strtok(NULL, ",");
+			S = T;
+			token_list.push_back(token(F, Type_Trans(S), {line,comp}));
+		}
+	}
+}
+int main(int argc, char* argv[]) {
+	S_R_table_in(); //init S_R_Table
+	Type_Trans_table_in(); // init trans table
+	
+	// get the out of lexical analyzer as input token
+	ifstream readFile;
+	readFile.open(argv[1]);
+	string buf = string((std::istreambuf_iterator<char>(readFile)), std::istreambuf_iterator<char>());
+	token_in(buf);
+	char* end = new char[4]; 
+	strcpy(end,"end");
+	token_list.push_back(token(end, 21, { 0,0 })); // add ""
+
+
+
+
+
+
+
+
+
+
+
+	return 0;
+}
