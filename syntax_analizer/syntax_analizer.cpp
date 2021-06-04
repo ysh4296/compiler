@@ -149,10 +149,10 @@ bool solve() {
 		string cmd = S_R_table[st.top()][cur.type];
 		switch(cmd[0]) {
 			case 's':
-				if (Reduce(cur, cmd)) return false;
+				if (Shift(cur, cmd)) return false;
 				break;
 			case 'r':
-				if (Shift(cur, cmd)) return false;
+				if (Reduce(cur, cmd)) return false;
 				break;
 			default:
 				return false;
