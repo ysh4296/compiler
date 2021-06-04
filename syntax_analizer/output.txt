@@ -1,0 +1,9 @@
+<Signed_integer,0>
+<Signed_integer,0>
+<Signed_integer,10>
+<Arithmetic_op_s,->
+<Signed_integer,1>
+<Arithmetic_op_a,+>
+<Arithmetic_op_m,*>
+<Arithmetic_op_d,/>
+<Signed_integer,0>
