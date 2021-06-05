@@ -23,7 +23,7 @@ string S_R_table[87][41];// S_R table for shift-reduce operation
 stack<int> local;// stack for save current state
 vector<token> token_list;// out of lexical analizer and input of syntax analizer
 vector<ci> trans_table;// table for translate tokens to push in token_list
-ii Reduce_Rule[39];// reduce rule for reduce operation [reduced_type number]  # for erase at this reduce }
+ii Reduce_Rule[39];// reduce rule for reduce operation [reduced_type number]{ next state , # for erase at this reduce }
 int cur_state = 1;// the start state is 0
 int index = 0; //index for current token position
 void S_R_table_in() // Fill in the Shift_Reduce table from "S_R_table.txt" which is in same directory
@@ -146,11 +146,11 @@ void Shift(token cur,string cmd) {// do shift
 	return;
 }
 bool solve() { // do shift_reduce operation and get result
-	local.push(0);// initial state
 	cout << "solve_in" << endl;
 	cout << "solve_stack push" << endl;
 	while (1) { //  the acc is -1
-		cout << token_list[index].data  << "     stack_top ()   " << local.top()<< endl;
+		cout << "stack_top ()  : " << local.top() << endl;
+		cout << "token data : "<< token_list[index].data << endl;
 		token cur = token_list[index];
 		cout << local.top() << " check " << cur.type << endl;
 		string cmd = S_R_table[local.top()][cur.type]; // the command for shift reduce operation
@@ -185,6 +185,7 @@ int main(int argc, char* argv[]) {
 	strcpy(end,"end");
 	token_list.push_back(token(end, 21, { 0,0 })); // add ""
 	// set token_list done
+	local.push(0);
 	cout << "set token list end" << endl;
 	if (solve()) // if solve is done with accept
 		cout << "accept";
