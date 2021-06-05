@@ -93,11 +93,11 @@ void token_in(string buf) {// get the input file in token vector to parse
 		list.push_back(T);
 		T = strtok(NULL, "|");
 	}
-	for (int i = 0 ; i < (int)list.size() ; i++) {
+	for (int i = 0 ; i < (int)list.size()-1 ; i++) {
 		int li = 0;
 		while (list[i][li] == '\n') {
 			li++;
-			if (li == strlen(list[i]) - 1) return;
+			if (li == strlen(list[i])) return;
 		}
 		if (li != 0) { // next token is in next line
 			line+= li;
@@ -141,7 +141,7 @@ void Shift(token cur,string cmd) {// do shift
 bool solve() { // do shift_reduce operation and get result
 	while (1) { //  the acc is -1
 		token cur = token_list[ind];
-		string cmd = S_R_table[local.top()][cur.type]; // the command for shift reduce operation
+		string cmd = S_R_table[local.top()][cur.type]; // the command for shift reduce operation 
 		switch(cmd[0]) { // cmd[0] is determine next operation
 			case 's': // do shift
 				Shift(cur, cmd);
@@ -172,9 +172,9 @@ int main(int argc, char* argv[]) {
 	// set token_list done
 	local.push(0);
 	if (solve()) // if solve is done with accept
-		cout << "accept";
+		cout << "accept" << endl;
 	else // if solve occur error
-		cout << "syntax_error : there can't be token named ' " << token_list[ind].data << " ' in " << token_list[ind].loc.second <<"th token of line number" << token_list[ind].loc.first; // the error occur in latest token
+		cout << "syntax_error : there can't be token named ' " << token_list[ind].data << " ' in " << token_list[ind].loc.second <<"th token of line number" << token_list[ind].loc.first << endl; // the error occur in latest token
 	
 	return 0;
 }

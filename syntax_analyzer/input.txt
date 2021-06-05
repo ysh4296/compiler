@@ -1,35 +1,8 @@
-class a
-{
-   int b=10;
-   int c(int d,int e)
-   {
-      int result=d+e;
-      return result;
-   }
-   int f()
-   {
-      if(true>false)
-      {
-         int g;
-      }
-      else
-      {
-         int h=3*4;
-      }
-      while(true)
-      {
-         b=b+(c-d);
-      }
-      return j;
-   }
-}
-
-int b="compiler";
-
-float c(int d,int e,int f)
+int c(int d,int e,int f)
 {
    int g;
    h=true;
+   String k = "strll";
    i=(j);
    if (true)
    {
@@ -40,3 +13,7 @@ float c(int d,int e,int f)
    }
    return i;
 }
+
+
+String s = "hello";
+char a = 'p'; 
