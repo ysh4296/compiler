@@ -35,9 +35,7 @@ void S_R_table_in() // Fill in the Shift_Reduce table from "S_R_table.txt" which
 		for (int c = 0; c < 41; c++) {
 			is >> st;
 			S_R_table[r][c] = st;// fill the table
-			cout << S_R_table[r][c] << " ";
 		}
-		cout << endl;
 	}
 	is.close();
 }
@@ -96,11 +94,9 @@ void token_in(string buf) {// get the input file in token vector to parse
 		T = strtok(NULL, "|");
 	}
 	for (int i = 0 ; i < (int)list.size() ; i++) {
-		cout << "list[" << i << "]  :  " << list[i] << endl;
 		int li = 0;
 		while (list[i][li] == '\n') {
 			li++;
-			cout << "li   : " << li  << "    "  << strlen(list[i]) - 1 << endl;
 			if (li == strlen(list[i]) - 1) return;
 		}
 		if (li != 0) { // next token is in next line
@@ -111,7 +107,6 @@ void token_in(string buf) {// get the input file in token vector to parse
 			f = T;
 			T = strtok(NULL, ":");
 			s = T;
-			cout << "s  " << s << "     f   " << f << endl;
 			token_list.push_back(token(s, Type_Trans(f), { line,comp })); // split and fill the token_list
 			comp++;
 		} else { // next token is in the same line
@@ -120,7 +115,6 @@ void token_in(string buf) {// get the input file in token vector to parse
 			f = T;
 			T = strtok(NULL, ":");
 			s = T;
-			cout << "s  " << s << "     f   " << f << endl;
 			token_list.push_back(token(s, Type_Trans(f), {line,comp}));// split and fill the token_list
 			comp++;
 		}
@@ -133,7 +127,6 @@ bool Reduce(token cur,string cmd) {// do reduce
 		local.pop();
 	}
 	int cu = local.top();// new stack top
-	cout << "error_check"<<cu<<"   "<< Reduce_Rule[next].first << endl;
 	if (S_R_table[cu][Reduce_Rule[next].first][0] == 'x') return false;// if next_state is invalid
 	next = stoi(S_R_table[cu][Reduce_Rule[next].first]); // next_state
 	local.push(next); // push next_state
@@ -146,22 +139,14 @@ void Shift(token cur,string cmd) {// do shift
 	return;
 }
 bool solve() { // do shift_reduce operation and get result
-	cout << "solve_in" << endl;
-	cout << "solve_stack push" << endl;
 	while (1) { //  the acc is -1
-		cout << "stack_top ()  : " << local.top() << endl;
-		cout << "token data : "<< token_list[ind].data << endl;
 		token cur = token_list[ind];
-		cout << local.top() << " check " << cur.type << endl;
 		string cmd = S_R_table[local.top()][cur.type]; // the command for shift reduce operation
-		cout << "cmd   : " << cmd << endl;
 		switch(cmd[0]) { // cmd[0] is determine next operation
 			case 's': // do shift
-				cout << "Shift" << endl;
 				Shift(cur, cmd);
 				break;
 			case 'r': // do reduce
-				cout << "Reduce" << endl;
 				if (!Reduce(cur, cmd)) return false; // reduce can fail
 				break;
 			case 'a': // the cmd is a means we accept tokens and syntax_analyze done
@@ -186,7 +171,6 @@ int main(int argc, char* argv[]) {
 	token_list.push_back(token(end, 21, { 0,0 })); // add ""
 	// set token_list done
 	local.push(0);
-	cout << "set token list end" << endl;
 	if (solve()) // if solve is done with accept
 		cout << "accept";
 	else // if solve occur error
