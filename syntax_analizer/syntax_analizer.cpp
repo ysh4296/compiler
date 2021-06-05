@@ -25,7 +25,7 @@ vector<token> token_list;// out of lexical analizer and input of syntax analizer
 vector<ci> trans_table;// table for translate tokens to push in token_list
 ii Reduce_Rule[40];// reduce rule for reduce operation [reduced_type number]{ next state , # for erase at this reduce }
 int cur_state = 1;// the start state is 0
-int index = 0; //index for current token position
+int ind = 0; //index for current token position
 void S_R_table_in() // Fill in the Shift_Reduce table from "S_R_table.txt" which is in same directory
 {   
 	ifstream is;
@@ -141,7 +141,7 @@ bool Reduce(token cur,string cmd) {// do reduce
 void Shift(token cur,string cmd) {// do shift
 	int next = stoi(cmd.substr(1));
 	local.push(next); // push next
-	index++; // go next token
+	ind++; // go next token
 	return;
 }
 bool solve() { // do shift_reduce operation and get result
@@ -149,8 +149,8 @@ bool solve() { // do shift_reduce operation and get result
 	cout << "solve_stack push" << endl;
 	while (1) { //  the acc is -1
 		cout << "stack_top ()  : " << local.top() << endl;
-		cout << "token data : "<< token_list[index].data << endl;
-		token cur = token_list[index];
+		cout << "token data : "<< token_list[ind].data << endl;
+		token cur = token_list[ind];
 		cout << local.top() << " check " << cur.type << endl;
 		string cmd = S_R_table[local.top()][cur.type]; // the command for shift reduce operation
 		cout << "cmd   : " << cmd << endl;
@@ -189,7 +189,7 @@ int main(int argc, char* argv[]) {
 	if (solve()) // if solve is done with accept
 		cout << "accept";
 	else // if solve occur error
-		cout << "syntax_error : there can't be token named ' " << token_list[index].data << " ' in " << token_list[index].loc.second <<"th token of line number" << token_list[index].loc.first; // the error occur in latest token
+		cout << "syntax_error : there can't be token named ' " << token_list[ind].data << " ' in " << token_list[ind].loc.second <<"th token of line number" << token_list[ind].loc.first; // the error occur in latest token
 	
 	return 0;
 }
