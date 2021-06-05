@@ -23,7 +23,7 @@ string S_R_table[87][41];// S_R table for shift-reduce operation
 stack<int> local;// stack for save current state
 vector<token> token_list;// out of lexical analizer and input of syntax analizer
 vector<ci> trans_table;// table for translate tokens to push in token_list
-ii Reduce_Rule[39];// reduce rule for reduce operation [reduced_type number]{ next state , # for erase at this reduce }
+ii Reduce_Rule[40];// reduce rule for reduce operation [reduced_type number]{ next state , # for erase at this reduce }
 int cur_state = 1;// the start state is 0
 int index = 0; //index for current token position
 void S_R_table_in() // Fill in the Shift_Reduce table from "S_R_table.txt" which is in same directory
@@ -31,17 +31,13 @@ void S_R_table_in() // Fill in the Shift_Reduce table from "S_R_table.txt" which
 	ifstream is;
     is.open("S_R_Table.txt");
 	string st;
-	int r, c;
 	for (int r = 0; r < 87; r++) {
 		for (int c = 0; c < 41; c++) {
-			S_R_table[r][c] = "x";// default value is 'x'
-		}
-	}
-	if (is.is_open()) {
-		while (!is.eof()) {
-			is >> r >> c >>st;
+			is >> st;
 			S_R_table[r][c] = st;// fill the table
+			cout << S_R_table[r][c] << " ";
 		}
+		cout << endl;
 	}
 	is.close();
 }
@@ -93,10 +89,10 @@ void token_in(string buf) {// get the input file in token vector to parse
 	int line = 0;// line no
 	int comp = 1;// component no
 	vector<char*> list;
-	T = strtok(S, ">");
+	T = strtok(S, "|");
 	while (T != NULL) {
 		list.push_back(T);
-		T = strtok(NULL, ">");
+		T = strtok(NULL, "|");
 	}
 	for (int i = 0 ; i < (int)list.size() ; i++) {
 		cout << "list[" << i << "]  :  " << list[i] << endl;
@@ -109,19 +105,21 @@ void token_in(string buf) {// get the input file in token vector to parse
 		if (li != 0) { // next token is in next line
 			line+= li;
 			comp = 1;
-			T = strtok(list[i], "<");
+			T = strtok(list[i], "~");
 			T = strtok(NULL, ":");
 			f = T;
 			T = strtok(NULL, ":");
 			s = T;
+			cout << "s  " << s << "     f   " << f << endl;
 			token_list.push_back(token(s, Type_Trans(f), { line,comp })); // split and fill the token_list
 			comp++;
 		} else { // next token is in the same line
-			T = strtok(list[i], "<");
+			T = strtok(list[i], "~");
 			T = strtok(T, ":");
 			f = T;
 			T = strtok(NULL, ":");
 			s = T;
+			cout << "s  " << s << "     f   " << f << endl;
 			token_list.push_back(token(s, Type_Trans(f), {line,comp}));// split and fill the token_list
 			comp++;
 		}
@@ -134,6 +132,7 @@ bool Reduce(token cur,string cmd) {// do reduce
 		local.pop();
 	}
 	int cu = local.top();// new stack top
+	cout << "error_check"<<cu<<"   "<< Reduce_Rule[next].first << endl;
 	if (S_R_table[cu][Reduce_Rule[next].first][0] == 'x') return false;// if next_state is invalid
 	next = stoi(S_R_table[cu][Reduce_Rule[next].first]); // next_state
 	local.push(next); // push next_state
