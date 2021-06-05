@@ -62,7 +62,7 @@ int Type_Trans(char* in) { // transform token_type_name to token number
 			return trans_table[i].second;
 		}
 	}
-	return;
+	return -1;
 }
 void Reduce_Rule_in() // fill reduce rules for reduce
 {
