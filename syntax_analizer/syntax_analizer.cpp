@@ -5,12 +5,12 @@
 #include <stack>
 #include <cstring>
 #include <string>
-#pragma warning(disable:4996)
+#pragma warning(disable:4996) // for strtok error
 using namespace std;
 typedef pair<int, int> ii;
 typedef pair<char*, int> ci;
 struct token {// struct for token
-	token(char* d , int t ,ii l) {
+	token(char* d , int t ,ii l) { // init the struct
 		data = d;
 		type = t;
 		loc = l;
@@ -34,17 +34,15 @@ void S_R_table_in() // Fill in the Shift_Reduce table from "S_R_table.txt" which
 	int r, c;
 	for (int r = 0; r < 87; r++) {
 		for (int c = 0; c < 41; c++) {
-			S_R_table[r][c] = "x";
+			S_R_table[r][c] = "x";// default value is 'x'
 		}
 	}
-	cout << "sr_in" << endl;
 	if (is.is_open()) {
 		while (!is.eof()) {
 			is >> r >> c >>st;
 			S_R_table[r][c] = st;// fill the table
 		}
 	}
-	cout << "sr_out" << endl;
 	is.close();
 }
 void Type_Trans_table_in() // fill trans table for use type in type_trans_table
@@ -64,8 +62,8 @@ void Type_Trans_table_in() // fill trans table for use type in type_trans_table
 	}
 	is.close();
 }
-int Type_Trans(char* in) {
-	for (int i = 0; i < (int)trans_table.size(); i++) {
+int Type_Trans(char* in) { // transform token_type_name to token number 
+	for (int i = 0; i < (int)trans_table.size(); i++) { // search in trans_table
 		if (strcmp(in, trans_table[i].first) == 0) {
 			return trans_table[i].second;
 		}
@@ -100,16 +98,23 @@ void token_in(string buf) {// get the input file in token vector to parse
 		list.push_back(T);
 		T = strtok(NULL, ">");
 	}
-	for (int i = 0 ; i < (int)list.size() - 1 ; i++) {
-		if (list[i][0] == '\n') { // next token is in next line
-			line++;
+	for (int i = 0 ; i < (int)list.size() ; i++) {
+		cout << "list[" << i << "]  :  " << list[i] << endl;
+		int li = 0;
+		while (list[i][li] == '\n') {
+			li++;
+			cout << "li   : " << li  << "    "  << strlen(list[i]) - 1 << endl;
+			if (li == strlen(list[i]) - 1) return;
+		}
+		if (li != 0) { // next token is in next line
+			line+= li;
 			comp = 1;
 			T = strtok(list[i], "<");
 			T = strtok(NULL, ":");
 			f = T;
 			T = strtok(NULL, ":");
 			s = T;
-			token_list.push_back(token(s, Type_Trans(f), { line,comp }));
+			token_list.push_back(token(s, Type_Trans(f), { line,comp })); // split and fill the token_list
 			comp++;
 		} else { // next token is in the same line
 			T = strtok(list[i], "<");
@@ -117,55 +122,52 @@ void token_in(string buf) {// get the input file in token vector to parse
 			f = T;
 			T = strtok(NULL, ":");
 			s = T;
-			token_list.push_back(token(s, Type_Trans(f), {line,comp}));
+			token_list.push_back(token(s, Type_Trans(f), {line,comp}));// split and fill the token_list
 			comp++;
 		}
 	}
 }
-bool Reduce(token cur,string cmd) {
-	int next = stoi(cmd.substr(1));
-	int erase = Reduce_Rule[next].second;
-	cout << "next   " << next << "    erase  " << erase << endl;
-	while (erase--) {
+bool Reduce(token cur,string cmd) {// do reduce
+	int next = stoi(cmd.substr(1)); // get reduce op num
+	int erase = Reduce_Rule[next].second; // get erase num for pop item
+	while (erase--) {// pop item
 		local.pop();
 	}
-	int cu = local.top();
-	if (S_R_table[cu][Reduce_Rule[next].first][0] == 'x') return false;
-	next = stoi(S_R_table[cu][Reduce_Rule[next].first]);
-	cout << "nexT_top" << next << endl;
-	local.push(next);
+	int cu = local.top();// new stack top
+	if (S_R_table[cu][Reduce_Rule[next].first][0] == 'x') return false;// if next_state is invalid
+	next = stoi(S_R_table[cu][Reduce_Rule[next].first]); // next_state
+	local.push(next); // push next_state
 	return true;
 }
-void Shift(token cur,string cmd) {
+void Shift(token cur,string cmd) {// do shift
 	int next = stoi(cmd.substr(1));
-	local.push(next);
-	index++;
+	local.push(next); // push next
+	index++; // go next token
 	return;
 }
-bool solve() {
-	local.push(0);
+bool solve() { // do shift_reduce operation and get result
+	local.push(0);// initial state
 	cout << "solve_in" << endl;
 	cout << "solve_stack push" << endl;
-	while (local.top() != -1) { //  the acc is -1
+	while (1) { //  the acc is -1
 		cout << token_list[index].data  << "     stack_top ()   " << local.top()<< endl;
 		token cur = token_list[index];
 		cout << local.top() << " check " << cur.type << endl;
-		string cmd = S_R_table[local.top()][cur.type];
+		string cmd = S_R_table[local.top()][cur.type]; // the command for shift reduce operation
 		cout << "cmd   : " << cmd << endl;
-		switch(cmd[0]) {
-			case 's':
+		switch(cmd[0]) { // cmd[0] is determine next operation
+			case 's': // do shift
 				cout << "Shift" << endl;
 				Shift(cur, cmd);
 				break;
-			case 'r':
+			case 'r': // do reduce
 				cout << "Reduce" << endl;
-				if (!Reduce(cur, cmd)) return false;
+				if (!Reduce(cur, cmd)) return false; // reduce can fail
 				break;
-			case 'a':
+			case 'a': // the cmd is a means we accept tokens and syntax_analyze done
 				return true;
-			default:
-				return false;
-				break;
+			case 'x':
+				return false; // default cmd means there's no operation next -> fail
 		}
 	}
 }
@@ -173,18 +175,21 @@ int main(int argc, char* argv[]) {
 	S_R_table_in(); //init S_R_Table
 	Type_Trans_table_in(); // init trans table
 	Reduce_Rule_in(); // init Reduce_table
+
 	// get the out of lexical analyzer as input token
 	ifstream readFile;
 	readFile.open(argv[1]);
 	string buf = string((std::istreambuf_iterator<char>(readFile)), std::istreambuf_iterator<char>());
-	token_in(buf);
-	char* end = new char[4]; 
+	token_in(buf);// get token_list from 'output.txt file'
+	char* end = new char[4]; // the last element '$'
 	strcpy(end,"end");
 	token_list.push_back(token(end, 21, { 0,0 })); // add ""
-	cout << "token_set end" << endl;
-	if (solve())
+	// set token_list done
+	cout << "set token list end" << endl;
+	if (solve()) // if solve is done with accept
 		cout << "accept";
-	else
-		cout << "syntax_error : there can't be token named ' " << token_list[index].data << " ' in " << token_list[index].loc.second <<"th token of line number" << token_list[index].loc.first;
+	else // if solve occur error
+		cout << "syntax_error : there can't be token named ' " << token_list[index].data << " ' in " << token_list[index].loc.second <<"th token of line number" << token_list[index].loc.first; // the error occur in latest token
+	
 	return 0;
 }
